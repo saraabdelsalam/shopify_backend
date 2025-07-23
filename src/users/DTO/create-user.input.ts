@@ -5,6 +5,7 @@ Only includes what the client can send to the server.
 🧠 Think of it as: “What the client is allowed to send in a mutation.”*/
 import { InputType, Field } from '@nestjs/graphql';
 import { UserType } from '../schema/users.schema';
+import { AddressInput } from './address.input';
 @InputType()
 export class CreateUserInput {
   @Field()
@@ -18,19 +19,6 @@ export class CreateUserInput {
 
   @Field(() => UserType, { defaultValue: UserType.CUSTOMER })
   userType?: UserType;
-
-  @Field({ nullable: true })
-  street?: string;
-
-  @Field({ nullable: true })
-  city?: string;
-
-  @Field({ nullable: true })
-  state?: string;
-
-  @Field({ nullable: true })
-  zipCode?: string;
-
-  @Field({ nullable: true })
-  country?: string;
+  @Field(() => AddressInput, { nullable: true })
+  address?: AddressInput;
 }
