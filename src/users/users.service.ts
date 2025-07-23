@@ -11,4 +11,7 @@ export class UsersService {
     const createdUser = new this.userModel(createUserDto);
     return createdUser.save();
   }
+  async login(email: string, password: string): Promise<User[]> {
+    return this.userModel.find({ email, password }).exec();
+  }
 }

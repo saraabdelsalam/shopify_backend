@@ -6,7 +6,13 @@ Maps to what users can query from the API.
 🧠 Think of it as: “What clients can see from the DB model.”
 */
 import { ObjectType, Field } from '@nestjs/graphql';
+import { registerEnumType } from '@nestjs/graphql';
 import { UserType } from '../schema/users.schema';
+
+registerEnumType(UserType, {
+  name: 'UserType', // this must match the GraphQL name
+  description: 'The type of user', // optional
+});
 @ObjectType()
 export class AddressEntity {
   @Field({ nullable: true })
