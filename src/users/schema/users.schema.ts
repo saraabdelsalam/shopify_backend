@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 export enum UserType {
   ADMIN = 'admin',
@@ -29,6 +29,7 @@ export const AddressSchema = SchemaFactory.createForClass(Address);
 
 @Schema()
 export class User extends Document {
+  declare _id: Types.ObjectId; // Ensure _id is of type ObjectId
   @Prop({ required: true })
   username: string;
 

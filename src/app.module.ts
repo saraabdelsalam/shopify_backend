@@ -7,6 +7,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { UsersModule } from './users/users.module';
       driver: ApolloDriver,
     }),
     UsersModule,
+    AuthModule, // Import AuthModule for authentication features
   ],
   controllers: [AppController],
   providers: [AppService],

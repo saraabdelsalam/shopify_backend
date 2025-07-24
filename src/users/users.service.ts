@@ -16,7 +16,7 @@ export class UsersService {
     });
     return createdUser.save();
   }
-  async login(email: string, password: string): Promise<User[]> {
-    return this.userModel.find({ email, password }).exec();
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userModel.findOne({ email }).exec();
   }
 }
