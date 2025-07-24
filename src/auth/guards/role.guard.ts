@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -7,10 +6,9 @@ import {
   ExecutionContext,
   ForbiddenException,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
-
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from '../decorators/role.decorator';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
@@ -18,23 +16,29 @@ export class RoleGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const roles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+    const roles =
+      this.reflector.get<string[]>('roles', context.getHandler()) || [];
 
-    if (!roles || roles.length === 0) {
-      return true; // No roles defined, allow access
+    if (!roles.length) {
+      return true;
     }
 
     const ctx = GqlExecutionContext.create(context);
-    const user = ctx.getContext().req.user;
-    const userType = user ? user.userType.toLowerCase() : 'guest';
-    if (!roles.includes(userType)) {
+    const req = ctx.getContext().req;
+
+    // Handle both REST and GraphQL requests
+    const user = req?.user || ctx.getContext()?.connection?.context?.user;
+
+    if (!user) {
+      throw new UnauthorizedException('No authenticated user found');
+    }
+
+    if (!roles.includes(user.userType)) {
       throw new ForbiddenException(
-        'You are not authorized to access this resource',
+        `User with role ${user.userType} not authorized`,
       );
     }
-    return true; // User has the required role
+
+    return true;
   }
 }

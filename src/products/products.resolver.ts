@@ -12,10 +12,9 @@ import { RoleGuard } from 'src/auth/guards/role.guard';
 export class ProductsResolver {
   constructor(private readonly productsService: ProductsService) {}
 
-  @UseGuards(GqlAuthGuard)
-  @UseGuards(RoleGuard)
-  @Roles('admin')
   @Mutation(() => ProductEntity)
+  @UseGuards(GqlAuthGuard, RoleGuard)
+  @Roles('admin')
   async createProduct(
     @Args('createProductInput') createProductInput: CreateProductInput,
   ) {
@@ -45,10 +44,9 @@ export class ProductsResolver {
     return product;
   }
   // only user with admin role can update or delete products
-  @UseGuards(GqlAuthGuard)
-  @UseGuards(RoleGuard)
-  @Roles('admin')
   @Mutation(() => ProductEntity)
+  @UseGuards(GqlAuthGuard, RoleGuard)
+  @Roles('admin') // <- allowed roles
   async updateProduct(
     @Args('updateProductInput') updateProductInput: UpdateProductInput,
   ) {
@@ -62,10 +60,9 @@ export class ProductsResolver {
     return updatedProduct;
   }
 
-  @UseGuards(GqlAuthGuard)
-  @UseGuards(RoleGuard)
-  @Roles('admin')
   @Mutation(() => ProductEntity)
+  @UseGuards(GqlAuthGuard, RoleGuard)
+  @Roles('admin') // <- allowed roles
   async removeProduct(@Args('id', { type: () => String }) id: string) {
     const result = await this.productsService.remove(id);
     if (!result) {

@@ -1,33 +1,28 @@
+/* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-interface JwtPayload {
-  sub: string;
-  email: string;
-  userType: string;
-}
-
 @Injectable()
-export class jwtStrategy extends PassportStrategy(Strategy) {
+export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
+      secretOrKey: process.env.JWT_SECRET ?? 'myshopifysecret', // Ensure you have JWT_SECRET in your environment variables
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: process.env.JWT_SECRET || 'myshopifysecret', // Ensure you have JWT_SECRET in your environment variables
     });
   }
-  // This method is called by Passport after the JWT token is verified
-  // It receives the payload from the JWT and returns the user object
-  // The payload should contain the userId, email, and userType
-  validate(payload: JwtPayload): {
-    userId: string;
-    email: string;
-    userType: string;
-  } {
-    // Here you can add additional validation logic if needed
+
+  async validate(payload: any) {
+    // Make sure required fields exist
+    if (!payload.sub || !payload.email || !payload.userType) {
+      return null; // Will cause 401 Unauthorized
+    }
+
     return {
-      userId: payload.sub,
+      id: payload.sub,
       email: payload.email,
       userType: payload.userType,
     };
