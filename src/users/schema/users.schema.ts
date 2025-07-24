@@ -35,7 +35,7 @@ export class User extends Document {
   @Prop({ required: true, unique: true })
   email: string;
 
-  @Prop({ required: true, minlength: 6, maxlength: 12 })
+  @Prop({ required: true, minlength: 6 })
   password: string;
 
   @Prop({ default: Date.now })
