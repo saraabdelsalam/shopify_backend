@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { User } from './schema/users.schema';
 import { Injectable } from '@nestjs/common';
 import { CreateUserInput } from './DTO/create-user.input';
@@ -40,16 +42,34 @@ export class UsersService {
     id: string,
     updateUserDto: UpdateUserInput,
   ): Promise<User | null> {
-    console.log('Updating user with ID:', id);
-    console.log('Update data:', updateUserDto);
-    const result = await this.userModel
-      .findByIdAndUpdate(id, updateUserDto, { new: true, runValidators: true })
-      .exec();
-    if (!result) {
-      console.error('User not found for update:', id);
-      return null; // or throw an error if preferred
+    // pass id as object by converting it to ObjectId
+    const userId = new Types.ObjectId(id);
+    const user = await this.userModel.findOne({ _id: userId }).exec();
+    if (!user) return null;
+
+    // 3. Handle nested address update
+    if (updateUserDto.address) {
+      // change only provided fields in address
+      const updatedAddress = {
+        ...user.address.toObject(), // Convert address to plain object
+        ...updateUserDto.address, // Merge with new address data
+      };
+      updateUserDto.address = updatedAddress; // Assign the updated address back to the DTO
+    } else {
+      // if address is not provided keep the existing address
+      updateUserDto.address = user.address;
     }
-    console.log('User updated successfully:', result);
-    return result;
+    // 4. Update remaining fields
+    const updatedUser = await this.userModel
+      .findByIdAndUpdate(userId, updateUserDto, {
+        new: true,
+        runValidators: true,
+      })
+      .exec();
+    return updatedUser;
+  }
+  catch(error) {
+    console.error('Error updating user:', error);
+    throw new Error('Failed to update user');
   }
 }
