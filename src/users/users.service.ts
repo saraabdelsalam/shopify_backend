@@ -5,6 +5,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserInput } from './DTO/create-user.input';
 import * as bcrypt from 'bcrypt';
 import { UpdateUserInput } from './DTO/update.user.input';
+import { console } from 'inspector';
 
 @Injectable()
 export class UsersService {
@@ -37,10 +38,18 @@ export class UsersService {
   }
   async updateUser(
     id: string,
-    updateUserDto: Partial<User> | UpdateUserInput,
+    updateUserDto: UpdateUserInput,
   ): Promise<User | null> {
-    return this.userModel
+    console.log('Updating user with ID:', id);
+    console.log('Update data:', updateUserDto);
+    const result = await this.userModel
       .findByIdAndUpdate(id, updateUserDto, { new: true, runValidators: true })
       .exec();
+    if (!result) {
+      console.error('User not found for update:', id);
+      return null; // or throw an error if preferred
+    }
+    console.log('User updated successfully:', result);
+    return result;
   }
 }

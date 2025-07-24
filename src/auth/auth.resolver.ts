@@ -15,7 +15,6 @@ export class AuthResolver {
     if (!result || !result.access_token) {
       throw new Error('Login failed');
     }
-    console.log('user id', result.payload);
     return result.access_token; // Return the JWT token as a string
   }
 }

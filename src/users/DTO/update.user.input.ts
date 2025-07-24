@@ -3,7 +3,7 @@ import { AddressInput } from './address.input';
 @InputType()
 export class UpdateUserInput {
   @Field({ nullable: true })
-  userName: string;
+  username: string;
   @Field({ nullable: true })
   address: AddressInput;
 }

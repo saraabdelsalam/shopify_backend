@@ -31,7 +31,7 @@ export class AuthService {
     const payload = {
       email: user.email,
       sub: user._id.toString(), // Ensure the user ID is a string
-      UserType: user.userType,
+      UserType: user.userType.toString(), // Ensure userType is a string
     };
     return {
       payload, // Include the payload in the response
