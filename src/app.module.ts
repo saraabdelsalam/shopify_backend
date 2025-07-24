@@ -7,6 +7,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersService } from './users/users.service';
 
 @Module({
   imports: [
@@ -19,8 +21,16 @@ import { UsersModule } from './users/users.module';
       driver: ApolloDriver,
     }),
     UsersModule,
+    AuthModule, // Import AuthModule for authentication features
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(private readonly UserService: UsersService) {}
+  // Seed the admin user when the application starts
+  async onModuleInit() {
+    await this.UserService.seedAdminUser();
+    console.log('Admin user seeded');
+  }
+}

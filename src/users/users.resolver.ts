@@ -23,13 +23,4 @@ export class UsersResolver {
     return user.toObject() as UserEntity;
   }
   // Other resolver methods can be added here
-  @Query(() => [UserEntity])
-  async Login(
-    @Args('email') email: string,
-    @Args('password') password: string,
-  ): Promise<UserEntity[]> {
-    const user = await this.usersService.login(email, password);
-    // Map the returned users to UserEntity
-    return user.map((user) => user.toObject() as UserEntity);
-  }
 }
