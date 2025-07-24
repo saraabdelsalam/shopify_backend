@@ -4,6 +4,7 @@ import { User } from './schema/users.schema';
 import { Injectable } from '@nestjs/common';
 import { CreateUserInput } from './DTO/create-user.input';
 import * as bcrypt from 'bcrypt';
+import { UpdateUserInput } from './DTO/update.user.input';
 
 @Injectable()
 export class UsersService {
@@ -33,5 +34,13 @@ export class UsersService {
   }
   async findByEmail(email: string): Promise<User | null> {
     return this.userModel.findOne({ email }).exec();
+  }
+  async updateUser(
+    id: string,
+    updateUserDto: Partial<User> | UpdateUserInput,
+  ): Promise<User | null> {
+    return this.userModel
+      .findByIdAndUpdate(id, updateUserDto, { new: true, runValidators: true })
+      .exec();
   }
 }

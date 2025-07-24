@@ -26,7 +26,7 @@ export class AuthService {
   async login(
     email: string,
     password: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ payload: object; access_token: string }> {
     const user = await this.validateUser(email, password);
     const payload = {
       email: user.email,
@@ -34,6 +34,7 @@ export class AuthService {
       UserType: user.userType,
     };
     return {
+      payload, // Include the payload in the response
       access_token: this.jwtService.sign(payload), // Generate JWT token
     };
   }
