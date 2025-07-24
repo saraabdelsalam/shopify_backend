@@ -5,6 +5,7 @@ import { UsersModule } from 'src/users/users.module';
 import { AuthService } from './auth.service';
 import { jwtStrategy } from './jwt.strategy';
 import { AuthResolver } from './auth.resolver';
+import { RoleGuard } from './guards/role.guard';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { AuthResolver } from './auth.resolver';
       signOptions: { expiresIn: '1d' },
     }), // Set token expiration time)
   ],
-  providers: [AuthService, jwtStrategy, AuthResolver],
+  providers: [AuthService, jwtStrategy, AuthResolver, RoleGuard],
   exports: [AuthService],
 })
 export class AuthModule {}

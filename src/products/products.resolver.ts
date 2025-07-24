@@ -3,11 +3,18 @@ import { ProductsService } from './products.service';
 import { ProductEntity } from './entities/product.entity';
 import { CreateProductInput } from './dto/create-product.input';
 import { UpdateProductInput } from './dto/update-product.input';
+import { UseGuards } from '@nestjs/common';
+import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
+import { Roles } from 'src/auth/decorators/role.decorator';
+import { RoleGuard } from 'src/auth/guards/role.guard';
 
 @Resolver(() => ProductEntity)
 export class ProductsResolver {
   constructor(private readonly productsService: ProductsService) {}
 
+  @UseGuards(GqlAuthGuard)
+  @UseGuards(RoleGuard)
+  @Roles('admin')
   @Mutation(() => ProductEntity)
   async createProduct(
     @Args('createProductInput') createProductInput: CreateProductInput,
@@ -37,7 +44,10 @@ export class ProductsResolver {
     }
     return product;
   }
-
+  // only user with admin role can update or delete products
+  @UseGuards(GqlAuthGuard)
+  @UseGuards(RoleGuard)
+  @Roles('admin')
   @Mutation(() => ProductEntity)
   async updateProduct(
     @Args('updateProductInput') updateProductInput: UpdateProductInput,
@@ -52,6 +62,9 @@ export class ProductsResolver {
     return updatedProduct;
   }
 
+  @UseGuards(GqlAuthGuard)
+  @UseGuards(RoleGuard)
+  @Roles('admin')
   @Mutation(() => ProductEntity)
   async removeProduct(@Args('id', { type: () => String }) id: string) {
     const result = await this.productsService.remove(id);
