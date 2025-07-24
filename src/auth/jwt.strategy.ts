@@ -17,7 +17,9 @@ export class jwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: process.env.JWT_SECRET || 'myshopifysecret', // Ensure you have JWT_SECRET in your environment variables
     });
   }
-
+  // This method is called by Passport after the JWT token is verified
+  // It receives the payload from the JWT and returns the user object
+  // The payload should contain the userId, email, and userType
   validate(payload: JwtPayload): {
     userId: string;
     email: string;

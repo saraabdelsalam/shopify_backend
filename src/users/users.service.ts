@@ -8,6 +8,21 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UsersService {
   constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  async seedAdminUser() {
+    const adminExists = await this.userModel.findOne({ userType: 'admin' });
+    if (!adminExists) {
+      const adminUser = new this.userModel({
+        username: 'admin',
+        email: 'saraabdelsalam.41@gmail.com',
+        password: await bcrypt.hash('123456', 6), // hashed password
+        userType: 'admin',
+      });
+      await adminUser.save();
+      console.log('Admin user created successfully');
+    } else {
+      console.log('Admin user already exists');
+    }
+  }
   async createUser(createUserDto: CreateUserInput): Promise<User> {
     const hashedPassword = await bcrypt.hash(createUserDto.password, 6);
     const createdUser = new this.userModel({
