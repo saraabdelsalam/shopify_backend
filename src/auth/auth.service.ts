@@ -26,14 +26,15 @@ export class AuthService {
   async login(
     email: string,
     password: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<{ payload: object; access_token: string }> {
     const user = await this.validateUser(email, password);
     const payload = {
       email: user.email,
       sub: user._id.toString(), // Ensure the user ID is a string
-      UserType: user.userType,
+      UserType: user.userType.toString(), // Ensure userType is a string
     };
     return {
+      payload, // Include the payload in the response
       access_token: this.jwtService.sign(payload), // Generate JWT token
     };
   }

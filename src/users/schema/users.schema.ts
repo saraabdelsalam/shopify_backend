@@ -9,6 +9,7 @@ export enum UserType {
 
 @Schema()
 export class Address {
+  [x: string]: any;
   @Prop()
   street: string;
 
