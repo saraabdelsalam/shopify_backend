@@ -12,6 +12,7 @@ export class AuthResolver {
     @Args('password') password: string,
   ): Promise<string> {
     const result = await this.authService.login(email, password);
+    console.log('Login result:', result);
     if (!result || !result.access_token) {
       throw new Error('Login failed');
     }

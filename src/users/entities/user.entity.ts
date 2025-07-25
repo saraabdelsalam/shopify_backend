@@ -7,7 +7,7 @@ Maps to what users can query from the API.
 */
 import { ObjectType, Field } from '@nestjs/graphql';
 import { registerEnumType } from '@nestjs/graphql';
-import { UserType } from '../schema/users.schema';
+import { UserType } from '../enums/user-type.enum';
 
 registerEnumType(UserType, {
   name: 'UserType', // this must match the GraphQL name

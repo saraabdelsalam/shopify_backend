@@ -45,13 +45,16 @@ export class UsersService {
     // pass id as object by converting it to ObjectId
     const userId = new Types.ObjectId(id);
     const user = await this.userModel.findOne({ _id: userId }).exec();
-    if (!user) return null;
-
+    console.log(`User found: ${JSON.stringify(user)}`);
+    if (!user) {
+      throw new Error(`User with ID ${id} not found`);
+    }
     // 3. Handle nested address update
     if (updateUserDto.address) {
       // change only provided fields in address
       const updatedAddress = {
-        ...user.address.toObject(), // Convert address to plain object
+        // Convert existing address to plain object if it exists
+        ...(user.address ? user.address.toObject() : {}),
         ...updateUserDto.address, // Merge with new address data
       };
       updateUserDto.address = updatedAddress; // Assign the updated address back to the DTO

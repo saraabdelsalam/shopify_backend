@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -13,13 +14,17 @@ import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env', // Load environment variables from .env file
+    }),
     MongooseModule.forRoot(process.env.MONGO_URI!),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
       playground: true,
       introspection: true,
       driver: ApolloDriver,
+      context: ({ req }) => ({ req }), // Pass the request object to the context
     }),
     UsersModule,
     AuthModule,

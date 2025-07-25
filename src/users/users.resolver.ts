@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { UsersService } from './users.service';
@@ -6,7 +7,7 @@ import { UsersService } from './users.service';
 import { UserEntity, AddressEntity } from './entities/user.entity';
 import { CreateUserInput } from './DTO/create-user.input';
 import { UpdateUserInput } from './DTO/update.user.input';
-import { UnauthorizedException, UseGuards } from '@nestjs/common';
+import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 
 @Resolver(() => UserEntity)
@@ -34,14 +35,12 @@ export class UsersResolver {
     @Args('updateUserDto') updateUserDto: UpdateUserInput,
     @Context() context,
   ): Promise<UserEntity | null> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
     const user = context.req.user;
-    if (!user) throw new UnauthorizedException();
+    console.log(`Updating user: ${JSON.stringify(user)}`);
     const updatedUser = await this.usersService.updateUser(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      user.userId, // Ensure the user ID is a string
+      user.id, // Ensure the user ID is a string
       updateUserDto,
     );
-    return updatedUser?.toObject() || null;
+    return updatedUser as UserEntity | null;
   }
 }

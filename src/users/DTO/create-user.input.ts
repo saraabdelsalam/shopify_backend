@@ -4,8 +4,8 @@ Uses @InputType() and @Field() decorators.
 Only includes what the client can send to the server.
 🧠 Think of it as: “What the client is allowed to send in a mutation.”*/
 import { InputType, Field } from '@nestjs/graphql';
-import { UserType } from '../schema/users.schema';
 import { AddressInput } from './address.input';
+import { UserType } from '../enums/user-type.enum';
 @InputType()
 export class CreateUserInput {
   @Field()

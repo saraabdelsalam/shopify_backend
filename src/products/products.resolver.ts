@@ -1,23 +1,23 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { ProductsService } from './products.service';
 import { ProductEntity } from './entities/product.entity';
 import { CreateProductInput } from './dto/create-product.input';
 import { UpdateProductInput } from './dto/update-product.input';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
-import { Roles } from 'src/auth/decorators/role.decorator';
-import { RoleGuard } from 'src/auth/guards/role.guard';
 
 @Resolver(() => ProductEntity)
 export class ProductsResolver {
   constructor(private readonly productsService: ProductsService) {}
 
+  @UseGuards(GqlAuthGuard)
   @Mutation(() => ProductEntity)
-  @UseGuards(GqlAuthGuard, RoleGuard)
-  @Roles('admin')
   async createProduct(
     @Args('createProductInput') createProductInput: CreateProductInput,
+    @Context() context,
   ) {
+    console.log(`current user: ${JSON.stringify(context.req.user)}`);
     const createdProduct =
       await this.productsService.create(createProductInput);
     if (!createdProduct) {
@@ -45,8 +45,7 @@ export class ProductsResolver {
   }
   // only user with admin role can update or delete products
   @Mutation(() => ProductEntity)
-  @UseGuards(GqlAuthGuard, RoleGuard)
-  @Roles('admin') // <- allowed roles
+  @UseGuards(GqlAuthGuard)
   async updateProduct(
     @Args('updateProductInput') updateProductInput: UpdateProductInput,
   ) {
@@ -61,8 +60,7 @@ export class ProductsResolver {
   }
 
   @Mutation(() => ProductEntity)
-  @UseGuards(GqlAuthGuard, RoleGuard)
-  @Roles('admin') // <- allowed roles
+  @UseGuards(GqlAuthGuard)
   async removeProduct(@Args('id', { type: () => String }) id: string) {
     const result = await this.productsService.remove(id);
     if (!result) {
