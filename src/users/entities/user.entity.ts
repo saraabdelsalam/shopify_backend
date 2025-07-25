@@ -7,9 +7,9 @@ Maps to what users can query from the API.
 */
 import { ObjectType, Field } from '@nestjs/graphql';
 import { registerEnumType } from '@nestjs/graphql';
-import { UserType } from '../enums/user-type.enum';
+import { role } from '../enums/user-type.enum';
 
-registerEnumType(UserType, {
+registerEnumType(role, {
   name: 'UserType', // this must match the GraphQL name
   description: 'The type of user', // optional
 });
@@ -48,8 +48,8 @@ export class UserEntity {
   @Field(() => Date)
   updatedAt: Date;
 
-  @Field(() => UserType, { defaultValue: UserType.CUSTOMER })
-  userType: UserType;
+  @Field(() => role, { defaultValue: role.CUSTOMER })
+  userType: role;
 
   @Field(() => AddressEntity, { nullable: true })
   address?: AddressEntity;

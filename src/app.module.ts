@@ -28,7 +28,8 @@ import { ProductsModule } from './products/products.module';
     }),
     UsersModule,
     AuthModule,
-    ProductsModule, // Import AuthModule for authentication features
+    ProductsModule,
+    // Import AuthModule for authentication features
   ],
   controllers: [AppController],
   providers: [AppService],

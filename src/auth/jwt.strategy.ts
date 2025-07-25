@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { UserType } from 'src/users/enums/user-type.enum';
+import { role } from 'src/users/enums/user-type.enum';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -19,16 +19,16 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: { email: string; sub: string; userType: UserType }) {
+  async validate(payload: { email: string; sub: string; role: role }) {
     // Make sure required fields exist
-    if (!payload.sub || !payload.email || !payload.userType) {
+    if (!payload.sub || !payload.email || !payload.role) {
       return null; // Will cause 401 Unauthorized
     }
 
     return {
       id: payload.sub,
       email: payload.email,
-      userType: payload.userType,
+      role: payload.role,
     };
   }
 }

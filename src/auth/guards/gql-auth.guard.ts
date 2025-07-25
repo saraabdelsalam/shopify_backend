@@ -1,25 +1,39 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { ExecutionContext, Injectable } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+import {
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import { AuthGuard } from '@nestjs/passport';
+
 @Injectable()
 export class GqlAuthGuard extends AuthGuard('jwt') {
   getRequest(context: ExecutionContext) {
     const ctx = GqlExecutionContext.create(context);
-    const request = ctx.getContext().req;
+    return ctx.getContext().req || ctx.getContext();
+  }
 
-    // For WebSocket subscriptions through graphql-ws
-    if (ctx.getContext().connection) {
-      return ctx.getContext().connection.context;
+  handleRequest(err: any, user: any, info: any, context: ExecutionContext) {
+    if (err || !user) {
+      throw err || new UnauthorizedException('Invalid token');
     }
 
-    // Make sure headers are properly attached
-    if (request && !request.headers) {
-      request.headers = request?.req?.headers || {};
-    }
+    const ctx = GqlExecutionContext.create(context);
+    const req = ctx.getContext().req;
+    const connection = ctx.getContext().connection;
 
-    return request;
+    // Attach user to all possible contexts
+    if (req) {
+      req.user = user;
+    }
+    if (connection?.context) {
+      connection.context.user = user;
+    }
+    ctx.getContext().user = user;
+
+    return user;
   }
 }

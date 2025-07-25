@@ -6,6 +6,8 @@ import { AuthService } from './auth.service';
 import { AuthResolver } from './auth.resolver';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule } from '@nestjs/config';
+import { RolesGuard } from './guards/roles.guard';
+import { GqlAuthGuard } from './guards/gql-auth.guard';
 
 @Module({
   imports: [
@@ -19,7 +21,7 @@ import { ConfigModule } from '@nestjs/config';
       signOptions: { expiresIn: process.env.JWT_EXPIRATION_TIME || '60m' }, // Default to 60 minutes if not set
     }),
   ],
-  providers: [AuthService, JwtStrategy, AuthResolver],
-  exports: [AuthService],
+  providers: [AuthService, JwtStrategy, GqlAuthGuard, RolesGuard, AuthResolver],
+  exports: [GqlAuthGuard, RolesGuard, JwtStrategy],
 })
 export class AuthModule {}

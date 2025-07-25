@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { UserType } from '../enums/user-type.enum';
+import { role } from '../enums/user-type.enum';
 
 @Schema()
 export class Address {
@@ -43,10 +43,10 @@ export class User extends Document {
 
   @Prop({
     type: String,
-    enum: UserType,
-    default: UserType.CUSTOMER,
+    enum: role,
+    default: role.CUSTOMER,
   })
-  userType: UserType;
+  userType: role;
 
   @Prop({ type: AddressSchema })
   address: Address;
